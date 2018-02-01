@@ -5,75 +5,36 @@ seoDescription: description for search engines
 isFree: true
 ---
 
-## Introduction
+## getInitialProps
 
-This is an example of how content appears on this web app. Check out the table of contents on the left.
+`getInitialProps()` is a static method that passes data to pages (can't be used in child components) by populating `props` of page's component. In this app, we fetch data asynchronously by using `async getInitialProps()`.
 
-#### Export and import
-
-Let's talk about export/import.
-
-Consider `export default function sendEmail()`.
-
-If our file `server/aws.js` had multiple functions to export, we would export `sendEmail()` like this:
+`Static method` means that method defines functions that acts on [class](https://javascript.info/class) instead of particular object of the class. For example, in Chapter 6, we will introduce `pages/customer/read-chapter.js` page. Like for any page in our app which is not written as pure component, we define ES6 class as:
 ```
-function sendEmail(options) {
-  // some code
-}
-
-function createTemplate(options) {
-  // some code
-}
-
-export sendEmail
-```
-
-The import code may look like:
-`import { sendEmail } from 'server/aws.js'`
-
-However, in our case, `sendEmail()` is the only function that we export from `server/aws.js`, so we specify it by using `default` in our export command:
-```
-function sendEmail(options) {
-  // some code
-}
-
-export default sendEmail
-```
-
-Or a shorter ES6 syntax :
-```
-export default function sendEmail(options) {
+class ReadChapter extends React.Component {
   // some code
 }
 ```
 
-The import code in the case of default export will be:
-`import sendEmail from 'server/aws.js'`
-
-If you'd like to give this imported function a different name (say you want to give it a more informative name in this new context), you do so with:
-`import { sendEmail as sendWelcomeEmail } from 'server/sendEmail.js'`
-
-> Del: `import { sendEmail as sendWelcomeEmail } from 'server/sendEmail.js'` is for renaming name export (not default). In order to rename default export: `import sendEmail as sendWelcomeEmail from 'server/sendEmail.js'`
-
-In this book, I aim to keep one function per file, give that file an informative name and, as a result, use default export more frequently than standard export.
-
-In situations where you need to use multiple API methods and maintain good modularity and readibility in your code, I suggest creating a new directory.
-
-Let's say you have 2 AWS SES methods: `sendEmail()` and `createTemplate()`. I would create a `server/aws` folder and place 3 files in it: `sendEmail.js` (with default export of `sendEmail`), `createTemplate.js` (with default export of `createTemplate`) and `index.js`. The latter file would contain:
-`server/aws/index.js` :
+`getInitialProps()` is static method of `ReadChapter` class:
 ```
-import sendEmail from 'server/aws/sendEmail';
-import userApi from 'server/aws/createTemplate';
+class ReadChapter extends React.Component {
+  static async getInitialProps({ query }) {
+    const { bookSlug, chapterSlug } = query;
 
-export { sendEmail, createTemplate }
+    const chapter = await getChapterDetail({ bookSlug, chapterSlug });
+
+    return chapter;
+  }
+}
 ```
 
-Now you can import sendEmail() with:
-`import { sendEmail } from 'server/aws'`
+Look at above example, user loads `pages/customer/read-chapter.js` page - `getInitialProps()` receives two slugs from `query` part of the route, passes paramaters to client-side API method `getChapterDetail()` and returns chapter `prop`. Now we are able to use chapter `prop` to show user `chapter.title` and `chapter.content`.
 
-You can import _all_ functions with:
-`import * as aws from 'server/aws'`
-or
-`import { sendEmail, createTemplate } from 'server/aws'`
+In above example, we pass `query` to method, but you can pass other parameters as well, check out full list of parameters in Next.js [docs](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
 
-Note that in ES6, we import from `server/aws`, not from `server/aws/index.js`.
+As you know from our discussion of server-side rendering in Chapter 1, the optimal strategy for fast loading is render page on server for initial page load, and on client for subsequent loads. Thus, in Next.js, `getInitialProps()` executes on server for initial page load but method executes on client when user navigates via `Link` or `Router.push`.
+
+If you want to render page on server on initial load, you should fetch data with `getInitialProps()`.
+
+If you want page to be rendered on client, without server-side rendering for initial load, fetch data using client-side API method inside `componentDidMount` lifecycle hook.
