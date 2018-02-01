@@ -1,3 +1,10 @@
+---
+title: Introduction
+seoTitle: title for search engines
+seoDescription: description for search engines
+isFree: true
+---
+
 ## Introduction
 
 This is an example of how content appears on this web app. Check out the table of contents on the left.
