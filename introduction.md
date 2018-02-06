@@ -5,23 +5,40 @@ seoDescription: description for search engines
 isFree: true
 ---
 
-## What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+## getInitialProps
 
-## Why do we use it?
-It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+### getInitialProps
 
+#### getInitialProps
 
-## Where does it come from?
-Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+`getInitialProps()` is a static method that passes data to pages (can't be used in child components) by populating `props` of a page's component. In this app, we fetch data asynchronously by using `async getInitialProps()`.
 
-## Code example
+`Static method` means that the method defines functions that act on [class](https://javascript.info/class) instead of particular object of the class. For example, in Chapter 6, we will introduce the `pages/customer/read-chapter.js` page. Like with any page in our app which is not written as a pure component, we define the ES6 class as:
 ```
-import React from 'react'
+class ReadChapter extends React.Component {
+  // some code
+}
+```
 
-class Index extends React.Component {
-  render() {
-    return <div>content</div>;
+`getInitialProps()` is static method of `ReadChapter` class:
+```
+class ReadChapter extends React.Component {
+  static async getInitialProps({ query }) {
+    const { bookSlug, chapterSlug } = query;
+
+    const chapter = await getChapterDetail({ bookSlug, chapterSlug });
+
+    return chapter;
   }
 }
 ```
+
+Look at the example above. The user loads the `pages/customer/read-chapter.js` page - then `getInitialProps()` receives two slugs from the `query` part of the route, passes paramaters to the client-side API method `getChapterDetail()`, and returns chapter `prop`. Now we are able to use chapter `prop` to show the user `chapter.title` and `chapter.content`.
+
+In this example, we pass `query` to the method, but you can pass other parameters as well. Check out the full list of parameters in Next.js [docs](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
+
+The optimal strategy for fast loading is rendering a page on the server for initial page load, then on the client for subsequent loads. Thus, in Next.js, `getInitialProps()` executes on the server for initial page load, but the method executes on the client when a user navigates via `Link` or `Router.push`.
+
+If you want to render a page on the server on initial load, you should fetch data with `getInitialProps()`.
+
+If you want the page to be rendered on client, without server-side rendering for initial load, fetch data using client-side API method inside `componentDidMount` lifecycle hook.
