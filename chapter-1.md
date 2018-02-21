@@ -6,4 +6,6 @@ excerpt: "This is a free excerpt of the chapter. To see the rest, you'll have to
 
 ---
 
-Here is some content for Chapter 1. It's only available to users who buy this book.
+Here is some content for Chapter 1. It's only available to the Admin and users who buy this book.
+
+When you log out and view this page, you'll see a buy button and the "excerpt" instead of this content.
