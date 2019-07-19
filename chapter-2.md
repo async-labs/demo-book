@@ -15,7 +15,8 @@ excerpt: "This is a free excerpt of the chapter. To see the rest, you'll have to
 - `highlighted`
 - regular text
 
-<pre>
+
+```
 function Square(props) {
     return (
         <button className="square" onClick={props.onClick}>
@@ -23,4 +24,4 @@ function Square(props) {
         </button>
     );
 }
-</pre>
+```
