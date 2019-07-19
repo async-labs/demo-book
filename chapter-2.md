@@ -15,12 +15,12 @@ excerpt: "This is a free excerpt of the chapter. To see the rest, you'll have to
 - `highlighted`
 - regular text
 
-```
+<pre>
 function Square(props) {
     return (
-        <button className-"square" onClick={props.onClick}>
+        <button className="square" onClick={props.onClick}>
             {props.value}
         </button>
     );
 }
-```
+</pre>
