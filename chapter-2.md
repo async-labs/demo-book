@@ -2,4 +2,17 @@
 
 #### Heading h4
 
-- bold
+- **bold**
+- *emphasized*
+- `highlighted`
+- regular text
+
+```
+function Square(props) {
+    return (
+        <button className-"square" onClick={props.onClick}>
+            {props.value}
+        </button>
+    );
+}
+```
